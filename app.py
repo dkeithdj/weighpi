@@ -57,6 +57,25 @@ def show_weights():
     return render_template("weight.html", weights=weights)
 
 
+@app.route("/weights/<int:weight_id>/update", methods=["GET", "POST"])
+def update_weight(weight_id):
+    weight = WeightData.query.get_or_404(weight_id)
+    if request.method == "POST":
+        weight.weight_before = request.form["weight_before"]
+        weight.weight_after = request.form["weight_after"]
+        db.session.commit()
+        return redirect(url_for("show_weights"))
+    return render_template("update_weight.html", title="Update Weight", weight=weight)
+
+
+@app.route("/weights/<int:weight_id>/delete", methods=["POST"])
+def delete_weight(weight_id):
+    weight = WeightData.query.get_or_404(weight_id)
+    db.session.delete(weight)
+    db.session.commit()
+    return redirect(url_for("show_weights"))
+
+
 def capture_image():
     cam = cv2.VideoCapture(0)
     ret, frame = cam.read()
