@@ -12,10 +12,11 @@ def main():
         if ser.in_waiting > 0:
             data = ser.readline().decode("utf-8").strip()
             json_data = json.loads(data)
-            print(json_data["sensor_front"])
-            print(json_data["sensor_rear"])
-            print(json_data["weight"])
-            print(json_data["hasVehicle"])
+            print(json_data)
+            # print(json_data["sensor_front"])
+            # print(json_data["sensor_rear"])
+            # print(json_data["weight"])
+            # print(json_data["hasVehicle"])
 
             # if data.startswith("W,"):
             #     weight_data = float(data.split(",")[1])
