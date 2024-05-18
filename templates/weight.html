@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mt-3">Weight Records</h2>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Weight Before (kg)</th>
+                <th>Weight After (kg)</th>
+                <th>Difference (kg)</th>
+                <th>Image</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for weight in weights %}
+            <tr>
+                <td>{{ weight.id }}</td>
+                <td>{{ weight.weight_before }}</td>
+                <td>{{ weight.weight_after }}</td>
+                <td>{{ weight.weight_after - weight.weight_before }}</td>
+                <td>
+                    {% if weight.image_path %}
+                    <img src="{{ url_for('static', filename='images/' ~ weight.image_path) }}" alt="Vehicle Image" style="width:100px;">
+                    {% else %}
+                    No Image
+                    {% endif %}
+                </td>
+                <td>{{ weight.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
