@@ -28,7 +28,7 @@
                     No Image
                     {% endif %}
                 </td>
-                <td>{{ weight.timestamp }}</td>
+                <td>{{ weight.created_at }}</td>
                 <td>
                     <!-- Edit Button -->
                     <a href="{{ url_for('update_weight', weight_id=weight.id) }}" class="btn btn-primary btn-sm">Edit</a>
