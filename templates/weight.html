@@ -23,7 +23,7 @@
                 <td>{{ weight.weight_after - weight.weight_before }}</td>
                 <td>
                     {% if weight.image_path %}
-                    <img src="{{ url_for('static', filename='images/' ~ weight.image_path) }}" alt="Vehicle Image" style="width:100px;">
+                    <img src="{{ url_for('static', filename=weight.image_path) }}" alt="Vehicle Image" style="width:100px;">
                     {% else %}
                     No Image
                     {% endif %}

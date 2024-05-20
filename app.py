@@ -78,16 +78,27 @@ def delete_weight(weight_id):
 
 def capture_image():
     cam = cv2.VideoCapture(0)
+
+    ic(cam)
+    if not cam.isOpened():
+        print("Error: Could not open camera.")
+        return None
     ret, frame = cam.read()
+
+    if not ret:
+        print("Error: Could not read frame.")
+        cam.release()
+        return None
     if ret:
         image_dir = os.path.join(basedir, "static/images")
         if not os.path.exists(image_dir):
             os.makedirs(image_dir)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         image_path = os.path.join(image_dir, f"{timestamp}.jpg")
+        ic(image_path)
         cv2.imwrite(image_path, frame)
         cam.release()
-        return image_path
+        return os.path.join("images", f"{timestamp}.jpg")
     cam.release()
     return None
 
@@ -114,13 +125,14 @@ def process_arduino_data():
                     total_weight += weight
                     num_readings += 1
                     if not has_vehicle:
-                        image_path = capture_image()
-                        ic(image_path)
+                        # image_path = capture_image()
+                        # ic(image_path)
                         weight_before = weight
                 else:
                     if has_vehicle:
                         if num_readings > 0:
                             average_weight = total_weight / num_readings
+                            image_path = capture_image()
                             new_entry = WeightData(
                                 weight_before=weight_before,
                                 weight_after=average_weight,
