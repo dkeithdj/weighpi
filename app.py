@@ -99,40 +99,41 @@ def process_arduino_data():
     num_readings = 0
     has_vehicle = False
 
-    while True:
-        if ser.in_waiting > 0:
-            data = ser.readline().decode("utf-8").strip()
-            json_data = json.loads(data)
+    with app.app_context():
+        while True:
+            if ser.in_waiting > 0:
+                data = ser.readline().decode("utf-8").strip()
+                json_data = json.loads(data)
 
-            ic(json_data)
-            current_has_vehicle = bool(json_data.get("hasVehicle"))
-            ic(current_has_vehicle)
-            weight = json_data.get("weight")
-            ic(weight)
+                ic(json_data)
+                current_has_vehicle = bool(json_data.get("hasVehicle"))
+                ic(current_has_vehicle)
+                weight = json_data.get("weight")
+                ic(weight)
 
-            if current_has_vehicle:
-                total_weight += weight
-                num_readings += 1
-                if not has_vehicle:
-                    #     image_path = capture_image()
-                    weight_before = weight
-            else:
-                if has_vehicle:
-                    if num_readings > 0:
-                        average_weight = total_weight / num_readings
-                        ic(average_weight)
-                        new_entry = WeightData(
-                            weight_before=weight_before,
-                            weight_after=average_weight,
-                            # image_path=image_path,
-                        )
-                        db.session.add(new_entry)
-                        db.session.commit()
-                    total_weight = 0.0
-                    num_readings = 0
-                    image_path = None
+                if current_has_vehicle:
+                    total_weight += weight
+                    num_readings += 1
+                    if not has_vehicle:
+                        #     image_path = capture_image()
+                        weight_before = weight
+                else:
+                    if has_vehicle:
+                        if num_readings > 0:
+                            average_weight = total_weight / num_readings
+                            ic(average_weight)
+                            new_entry = WeightData(
+                                weight_before=weight_before,
+                                weight_after=average_weight,
+                                # image_path=image_path,
+                            )
+                            db.session.add(new_entry)
+                            db.session.commit()
+                        total_weight = 0.0
+                        num_readings = 0
+                        image_path = None
 
-            has_vehicle = current_has_vehicle
+                has_vehicle = current_has_vehicle
 
 
 arduino_thread = Thread(target=process_arduino_data)
