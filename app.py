@@ -103,6 +103,7 @@ def process_arduino_data():
             data = ser.readline().decode("utf-8").strip()
             json_data = json.loads(data)
 
+            ic(json_data)
             current_has_vehicle = json_data.get("hasVehicle", False)
             weight = json_data.get("weight", 0)
 
