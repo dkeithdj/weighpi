@@ -5,6 +5,7 @@ import json
 import cv2
 import os
 from datetime import datetime
+from threading import Thread
 
 from icecream import ic
 
@@ -104,26 +105,29 @@ def process_arduino_data():
             json_data = json.loads(data)
 
             ic(json_data)
-            current_has_vehicle = json_data.get("hasVehicle", False)
-            weight = json_data.get("weight", 0)
+            current_has_vehicle = bool(json_data.get("hasVehicle"))
+            ic(current_has_vehicle)
+            weight = json_data.get("weight")
+            ic(weight)
 
             if current_has_vehicle:
                 total_weight += weight
                 num_readings += 1
-                if not has_vehicle:
-                    image_path = capture_image()
-                    weight_before = weight
+                # if not has_vehicle:
+                #     image_path = capture_image()
+                #     weight_before = weight
             else:
                 if has_vehicle:
                     if num_readings > 0:
                         average_weight = total_weight / num_readings
-                        new_entry = WeightData(
-                            weight_before=weight_before,
-                            weight_after=average_weight,
-                            image_path=image_path,
-                        )
-                        db.session.add(new_entry)
-                        db.session.commit()
+                        ic(average_weight)
+                        # new_entry = WeightData(
+                        #     weight_before=weight_before,
+                        #     weight_after=average_weight,
+                        #     image_path=image_path,
+                        # )
+                        # db.session.add(new_entry)
+                        # db.session.commit()
                     total_weight = 0.0
                     num_readings = 0
                     image_path = None
@@ -131,10 +135,10 @@ def process_arduino_data():
             has_vehicle = current_has_vehicle
 
 
-if __name__ == "__main__":
-    from threading import Thread
+arduino_thread = Thread(target=process_arduino_data)
+arduino_thread.daemon = True
+arduino_thread.start()
 
-    arduino_thread = Thread(target=process_arduino_data)
-    arduino_thread.daemon = True
-    arduino_thread.start()
+if __name__ == "__main__":
+
     app.run(host="0.0.0.0", port=5000, debug=True)
