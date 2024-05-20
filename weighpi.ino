@@ -14,10 +14,13 @@ float distance1, distance2;
 
 // Initialize weight sensor
 HX711 scale;
-const int calibration_factor = -7050; // adjust this according to your load cell
+// const int calibration_factor = -16050; // adjust this according to your load cell
+const int calibration_factor = -160; // adjust this according to your load cell
+
 float totalWeight = 0.0;
 int numReadings = 0;
 const int NUM_READINGS_FOR_AVERAGE = 500; // 5 seconds with 100 ms delay
+
 
 void setup() {
   Serial.begin(9600);
@@ -29,13 +32,12 @@ void setup() {
   pinMode(ECHO_PIN2, INPUT);
   
   scale.begin(WEIGHT_DOUT_PIN, WEIGHT_SCK_PIN);
-  scale.set_scale(calibration_factor);
-  
 
+  scale.set_scale(calibration_factor);
+  scale.tare();
 }
 
 void loop() {
-    JsonDocument doc;
 
   // Read ultrasonic sensor 1
   digitalWrite(TRIG_PIN1, LOW);
@@ -56,44 +58,29 @@ void loop() {
   distance2 = duration2 * 0.034 / 2;
   
   // Read weight sensor
-  float weight = scale.get_units(10);
-  // Serial.print("Weight: ");
-  // Serial.println(weight);
+  int weight = round(scale.get_units(10));
 
-  // Serial.print("US1: ");
-  // Serial.println(distance1);
-
-  // Serial.print("US2: ");
-  // Serial.println(distance2);
-
+  // Calculate the difference from the previous weight
+  
+  // Prepare JSON document
+  StaticJsonDocument<200> doc;
   doc["sensor_front"] = distance1;
   doc["sensor_rear"] = distance2;
   doc["weight"] = weight;
 
   // Check conditions for weight calculation
-  if (distance1 > 20 && distance2 > 20 && weight > 80) { // Adjust distance threshold as needed
-    // Serial.println(weight);
-    // totalWeight += weight;
-    // numReadings++;
-    // if (numReadings >= NUM_READINGS_FOR_AVERAGE) {
-      // float averageWeight = totalWeight / numReadings;
-      // Send average weight to Raspberry Pi
-      // Serial.print("W,");
-      // Serial.println(weight);
-      doc["hasVehicle"] = true;
-      // Serial.println(",");
-      // totalWeight = 0.0;
-      // numReadings = 0;
-    // }
+  if (distance1 > 12 && distance2 > 12 && weight > 10) { // Adjust distance threshold as needed
+    doc["hasVehicle"] = true;
   } else {
-      doc["hasVehicle"] = false;
-    // totalWeight = 0.0; // Reset total weight if either ultrasonic sensor is blocked
-    // numReadings = 0; // Reset number of readings
+    doc["hasVehicle"] = false;
   }
+
+  // Serialize JSON and print
   String jsonString;
-  serializeJson(doc,jsonString);
+  serializeJson(doc, jsonString);
   Serial.println(jsonString);
-  
+
+  // Update the previous weight
+
   delay(300); // Adjust delay as needed
 }
-
