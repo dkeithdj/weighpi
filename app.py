@@ -115,7 +115,7 @@ def process_arduino_data():
                     total_weight += weight
                     num_readings += 1
                     if not has_vehicle:
-                            image_path = capture_image()
+                        image_path = capture_image()
                         weight_before = weight
                 else:
                     if has_vehicle:
