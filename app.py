@@ -54,7 +54,6 @@ def index():
 @app.route("/weights")
 def show_weights():
     weights = WeightData.query.order_by(WeightData.created_at.desc()).all()
-    ic(weights[0].get("created_at"))
     return render_template("weight.html", weights=weights)
 
 
