@@ -77,7 +77,7 @@ def delete_weight(weight_id):
 
 
 def capture_image():
-    cam = cv2.VideoCapture(2)
+    cam = cv2.VideoCapture(0)
 
     ic(cam)
     if not cam.isOpened():
