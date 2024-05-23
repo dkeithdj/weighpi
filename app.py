@@ -129,14 +129,15 @@ def process_arduino_data():
                         weight_before = weight
                 else:
                     if has_vehicle:
-                        image_path = capture_image(cv2.VideoCapture(0))
                         if num_readings > 0:
+                            image_path = capture_image(cv2.VideoCapture(0))
                             average_weight = total_weight / num_readings
                             new_entry = WeightData(
                                 weight_before=weight_before,
                                 weight_after=average_weight,
                                 image_path=image_path,
                             )
+                            ic(new_entry)
                             db.session.add(new_entry)
                             db.session.commit()
                         total_weight = 0.0
