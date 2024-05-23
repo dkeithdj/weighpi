@@ -3,8 +3,8 @@
 
 #define TRIG_PIN1 2
 #define ECHO_PIN1 3
-#define TRIG_PIN2 4
-#define ECHO_PIN2 5
+#define TRIG_PIN2 13
+#define ECHO_PIN2 12
 #define WEIGHT_DOUT_PIN A1
 #define WEIGHT_SCK_PIN A0
 
@@ -15,7 +15,7 @@ float distance1, distance2;
 // Initialize weight sensor
 HX711 scale;
 // const int calibration_factor = -16050; // adjust this according to your load cell
-const int calibration_factor = -160; // adjust this according to your load cell
+const int calibration_factor = -105; // adjust this according to your load cell
 
 float totalWeight = 0.0;
 int numReadings = 0;

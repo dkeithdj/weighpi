@@ -76,8 +76,8 @@ def delete_weight(weight_id):
     return redirect(url_for("show_weights"))
 
 
-def capture_image():
-    cam = cv2.VideoCapture(0)
+def capture_image(webcam):
+    cam = webcam
 
     if not cam.isOpened():
         ic("Error: Could not open camera.")
@@ -129,7 +129,7 @@ def process_arduino_data():
                         weight_before = weight
                 else:
                     if has_vehicle:
-                        image_path = capture_image()
+                        image_path = capture_image(cv2.VideoCapture(0))
                         if num_readings > 0:
                             average_weight = total_weight / num_readings
                             new_entry = WeightData(
